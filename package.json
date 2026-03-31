@@ -4,16 +4,11 @@
   "workspaces" : [
     "back"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/qweq05293/tg-game.git"
-  },
   "license": "ISC",
   "author": "DKOTL",
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "install:all": "npm install",
     "test": "echo \"Error: no test specified\" && exit 1"
   }
 }

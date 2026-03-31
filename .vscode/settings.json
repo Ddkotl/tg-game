@@ -11,10 +11,10 @@
     "files.trimTrailingWhitespace": true,
     "files.insertFinalNewline": true,
     "files.exclude": {
-        "**/.git": true,
+        "**/.git": false,
         "**/.DS_Store": true,
-        "**/node_modules": true,
-        "**/dist": true
+        "**/node_modules": false,
+        "**/dist": false
     },
     "search.exclude": {
         "**/node_modules": true,
@@ -25,4 +25,13 @@
     "workbench.colorTheme": "GitHub Dark",
     "workbench.iconTheme": "material-icon-theme",
     "terminal.integrated.scrollback": 10000,
+    "terminal.integrated.splitCwd": "inherited",
+      "terminal.integrated.gpuAcceleration": "on",
+       "terminal.integrated.copyOnSelection": true,
+        "terminal.integrated.cursorBlinking": true,
+    "terminal.integrated.cursorStyle": "block",
+    "editor.links": true,
+    "npm.packageManager": "npm",
+    "npm.scriptExplorerAction": "open",
+    "js/ts.updateImportsOnFileMove.enabled": "always",
 }
