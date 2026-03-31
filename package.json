@@ -1,14 +1,22 @@
 {
   "name": "tg-game",
   "version": "1.0.0",
-  "workspaces" : [
-    "back"
+  "workspaces": [
+    "apps/*"
   ],
   "license": "ISC",
   "author": "DKOTL",
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "back:dev": "npm run start:dev -w back",
+    "front:dev": "npm run dev -w front",
+    "dev": "concurrently \"npm run back:dev\" \"npm run front:dev\"",
+    "back:build": "npm run build -w back",
+    "build": "npm run build --workspaces",
+    "format": "prettier -w ."
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
   }
 }
