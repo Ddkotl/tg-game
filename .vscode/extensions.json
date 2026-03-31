@@ -1,0 +1,14 @@
+{
+   "recommendations": [
+      "ms-vscode.vscode-typescript-next",
+      "esbenp.prettier-vscode",
+      "rvest.vs-code-prettier-eslint",
+      "bradlc.vscode-tailwindcss",
+      "Prisma.prisma",
+      "formulahendry.auto-rename-tag",
+      "WallabyJs.console-ninja",
+      "usernamehw.errorlens",
+      "mattpocock.ts-error-translator",
+      "PKief.material-icon-theme",
+   ]
+}

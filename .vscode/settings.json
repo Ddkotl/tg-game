@@ -1,0 +1,28 @@
+{
+    "git.ignoreLimitWarning": true,
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+        "source.addMissingImports": "always",
+        "source.fixAll.eslint": "explicit",
+        "source.organizeImports": "always"
+    },
+    "editor.stickyScroll.enabled": true,
+    "editor.guides.bracketPairs": "active",
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.exclude": {
+        "**/.git": true,
+        "**/.DS_Store": true,
+        "**/node_modules": true,
+        "**/dist": true
+    },
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/dist": true,
+        "**/build": true
+    },
+    "workbench.list.smoothScrolling": true,
+    "workbench.colorTheme": "GitHub Dark",
+    "workbench.iconTheme": "material-icon-theme",
+    "terminal.integrated.scrollback": 10000,
+}
