@@ -1,5 +1,5 @@
-import { Test, TestingModule } from "@nestjs/testing";
 import { INestApplication } from "@nestjs/common";
+import { Test, TestingModule } from "@nestjs/testing";
 import request from "supertest";
 import { App } from "supertest/types";
 import { AppModule } from "../src/app.module";
@@ -21,5 +21,13 @@ describe("AppController (e2e)", () => {
       .get("/")
       .expect(200)
       .expect("Hello World!");
+  });
+  it("/user (GET)", () => {
+    return request(app.getHttpServer())
+      .get("/user?telegramId=999")
+      .expect(200)
+      .expect((res) => {
+        expect(res.body.telegramId).toBe("999");
+      });
   });
 });

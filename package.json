@@ -14,6 +14,8 @@
     "dev": "concurrently \"npm run back:dev\" \"npm run front:dev\"",
     "back:build": "npm run build -w back",
     "build": "npm run build --workspaces",
+    "docker:start:all": "npm run docker:start --workspaces",
+    "docker:stop:all": "npm run docker:stop --workspaces",
     "format": "prettier -w ."
   },
   "devDependencies": {
