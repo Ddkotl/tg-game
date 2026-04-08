@@ -57,6 +57,10 @@ jobs:
       - uses: pnpm/action-setup@v4
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+      - name: Generate Prisma client
+        run: cd apps/back && pnpm prisma generate
+      - name: Run database migrations
+        run: cd apps/back && pnpm prisma migrate deploy
       - name: Run tests
         run: pnpm test
         env:

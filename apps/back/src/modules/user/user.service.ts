@@ -1,15 +1,21 @@
 import { Injectable } from "@nestjs/common";
+import { User } from "@prisma/client";
 import { PrismaService } from "../prisma/prisma.service";
 
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
 
-  async findOrCreateByTelegramId(telegramId: string, username?: string) {
+  async findOrCreateByTelegramId(
+    telegramId: string,
+    username?: string,
+  ): Promise<User> {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     let user = await this.prisma.user.findUnique({
       where: { telegramId },
     });
     if (!user) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       user = await this.prisma.user.create({
         data: {
           telegramId,

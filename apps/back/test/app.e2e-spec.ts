@@ -27,7 +27,7 @@ describe("AppController (e2e)", () => {
       .get("/user?telegramId=999")
       .expect(200)
       .expect((res) => {
-        expect(res.body.telegramId).toBe("999");
+        expect(res.body).toMatchObject({ telegramId: "999" });
       });
   });
 });
