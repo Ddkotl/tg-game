@@ -1,26 +1,32 @@
-# Use Node.js 20 Alpine as base image
-FROM node:20-alpine
+FROM node:18-alpine
 
-# Set working directory
 WORKDIR /app
 
 # Install pnpm
 RUN npm install -g pnpm
 
-# Copy package files
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+# Copy workspace/root configuration files
+COPY pnpm-lock.yaml pnpm-workspace.yaml turbo.json package.json ./
 
-# Copy back app
-COPY apps/back ./apps/back
+# Copy all app files
+COPY apps ./apps
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
-# Build the application
-RUN cd apps/back && pnpm build
+# Generate Prisma client
+RUN cd apps/back && pnpm prisma generate
 
-# Expose port
+# Build the backend app
+WORKDIR /app/apps/back
+RUN pnpm build
+
+# Prune production dependencies
+WORKDIR /app
+RUN pnpm install --frozen-lockfile --prod
+
+WORKDIR /app/apps/back
+
 EXPOSE 3000
 
-# Start the application
-CMD cd apps/back && pnpm start:prod
+CMD ["node", "dist/main"]

@@ -1,32 +1,30 @@
-# Use Node.js 20 Alpine as base image
-FROM node:20-alpine
+# Build stage
+FROM node:18-alpine AS builder
 
-# Set working directory
 WORKDIR /app
 
 # Install pnpm
 RUN npm install -g pnpm
 
-# Copy package files
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+# Copy workspace/root configuration files
+COPY pnpm-lock.yaml pnpm-workspace.yaml turbo.json package.json ./
 
-# Copy front app
-COPY apps/front ./apps/front
+# Copy all app files
+COPY apps ./apps
 
 # Install dependencies
 RUN pnpm install --frozen-lockfile
 
-# Build the application
-RUN cd apps/front && pnpm build
+# Build the frontend app
+WORKDIR /app/apps/front
+RUN pnpm build
 
-# Use nginx to serve static files
+# Production stage
 FROM nginx:alpine
 
 # Copy built files to nginx
-COPY --from=0 /app/apps/front/dist /usr/share/nginx/html
+COPY --from=builder /app/apps/front/dist /usr/share/nginx/html
 
-# Expose port
 EXPOSE 80
 
-# Start nginx
-CMD nginx -g 'daemon off;'
+CMD ["nginx", "-g", "daemon off;"]

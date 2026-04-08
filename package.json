@@ -1,11 +1,8 @@
 {
   "name": "tg-game",
   "version": "1.0.0",
-  "license": "ISC",
-  "author": "DKOTL",
-  "packageManager": "pnpm@10.23.0",
-  "type": "commonjs",
-  "main": "index.js",
+  "private": false,
+  "packageManager": "pnpm@9.15.0",
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",

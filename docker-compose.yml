@@ -9,6 +9,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   back:
     build:
@@ -16,10 +21,12 @@ services:
       dockerfile: ./apps/back/Dockerfile
     environment:
       DATABASE_URL: ${DATABASE_URL}
+      NODE_ENV: ${NODE_ENV:-development}
     ports:
       - "3000:3000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   front:
     build:
@@ -27,6 +34,8 @@ services:
       dockerfile: ./apps/front/Dockerfile
     ports:
       - "80:80"
+    depends_on:
+      - back
 
 volumes:
   postgres_data:

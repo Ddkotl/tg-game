@@ -1,5 +1,5 @@
 import { Controller, Get, Query } from "@nestjs/common";
-import { User } from "@prisma/client";
+import { User } from "../generated/client.ts";
 import { UserService } from "./user.service";
 
 @Controller("user")
