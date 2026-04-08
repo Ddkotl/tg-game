@@ -11,7 +11,7 @@
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
   "files.exclude": {
-    "**/.git": false,
+    "**/.git": true,
     "**/.DS_Store": true,
     "**/node_modules": false,
     "**/dist": false

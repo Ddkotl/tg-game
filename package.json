@@ -1,24 +1,18 @@
 {
   "name": "tg-game",
   "version": "1.0.0",
-  "workspaces": [
-    "apps/*"
-  ],
   "license": "ISC",
   "author": "DKOTL",
+  "packageManager": "pnpm@10.23.0",
   "type": "commonjs",
   "main": "index.js",
   "scripts": {
-    "back:dev": "npm run start:dev -w back",
-    "front:dev": "npm run dev -w front",
-    "dev": "concurrently \"npm run back:dev\" \"npm run front:dev\"",
-    "back:build": "npm run build -w back",
-    "build": "npm run build --workspaces",
-    "docker:start:all": "npm run docker:start --workspaces",
-    "docker:stop:all": "npm run docker:stop --workspaces",
-    "format": "prettier -w ."
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "test": "turbo run test"
   },
   "devDependencies": {
-    "concurrently": "^8.2.0"
+    "turbo": "^2.0.0"
   }
 }
