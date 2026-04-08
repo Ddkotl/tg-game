@@ -11,7 +11,7 @@ Text-based RPG (browser-style) delivered initially via **Telegram Mini App**, wi
 * **Backend:** TypeScript, NestJS
 * **Frontend:** React (Vite)
 * **UI:** shadcn/ui
-* **Database:** PostgreSQL , Dockerized
+* **Database:** PostgreSQL
 * **ORM:** Prisma
 * **Tooling:** pnpm, turborepo
 
@@ -224,7 +224,96 @@ Design must be extensible from start.
 
 ---
 
-## 8. Prisma Guidelines
+## 8. Infrastructure & DevOps (Docker + CI/CD)
+
+### 8.1 Docker (MANDATORY)
+
+All parts of the system MUST run in Docker containers.
+
+#### Services
+
+* backend (NestJS)
+* frontend (React)
+* database (PostgreSQL)
+
+#### Requirements
+
+* Each app must have its own `Dockerfile`
+* Use `docker-compose` for local development
+* Environment variables via `.env`
+
+#### Example structure
+
+```
+repo/
+  docker-compose.yml
+  apps/
+    back/
+      Dockerfile
+    front/
+      Dockerfile
+```
+
+#### Rules
+
+* Containers must be independently buildable
+* No local machine dependencies
+* Database must be dockerized (PostgreSQL)
+
+---
+
+### 8.2 Testing (REQUIRED)
+
+#### Backend
+
+* Unit tests for services
+* Integration tests for modules
+
+#### Frontend
+
+* Component tests (basic level for MVP)
+
+#### Rules
+
+* Tests must run in CI
+* Tests must not depend on local state
+
+---
+
+### 8.3 CI/CD (GitHub Actions)
+
+CI/CD MUST be configured using GitHub Actions.
+
+#### Required pipelines
+
+1. **CI Pipeline** (on push / PR)
+
+* install dependencies
+* lint
+* build
+* run tests
+
+2. **Docker Build Pipeline**
+
+* build backend image
+* build frontend image
+
+#### Example jobs
+
+* `lint`
+* `build`
+* `test`
+* `docker-build`
+
+#### Rules
+
+* Pipeline must fail on any error
+* No skipped tests
+* Use caching where possible (pnpm cache)
+
+---
+
+## 9. Prisma Guidelines
 
 * Explicit relations
 * No implicit many-to-many
@@ -233,7 +322,7 @@ Design must be extensible from start.
 
 ---
 
-## 9. Performance Rules
+## 10. Performance Rules
 
 * Avoid N+1 queries
 * Always paginate
@@ -241,7 +330,7 @@ Design must be extensible from start.
 
 ---
 
-## 10. Testing Strategy
+## 11. Testing Strategy
 
 * Unit tests → services
 * Integration tests → modules
@@ -249,7 +338,7 @@ Design must be extensible from start.
 
 ---
 
-## 11. Git Workflow
+## 12. Git Workflow
 
 ### Commits
 
@@ -265,7 +354,7 @@ Design must be extensible from start.
 
 ---
 
-## 12. AI Agent Rules
+## 13. AI Agent Rules
 
 ### MUST NOT
 
@@ -283,7 +372,7 @@ Design must be extensible from start.
 
 ---
 
-## 13. Definition of Done
+## 14. Definition of Done
 
 A task is complete when:
 
@@ -295,7 +384,7 @@ A task is complete when:
 
 ---
 
-## 14. Engineering Priorities
+## 15. Engineering Priorities
 
 Always prioritize:
 
@@ -306,7 +395,7 @@ Always prioritize:
 
 ---
 
-## 15. Anti-Patterns (Hard Stop)
+## 16. Anti-Patterns (Hard Stop)
 
 * Business logic in frontend
 * Shared domain logic between apps
