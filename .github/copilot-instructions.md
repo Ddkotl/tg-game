@@ -11,7 +11,7 @@ Text-based RPG (browser-style) delivered initially via **Telegram Mini App**, wi
 * **Backend:** TypeScript, NestJS
 * **Frontend:** React (Vite)
 * **UI:** shadcn/ui
-* **Database:** PostgreSQL
+* **Database:** PostgreSQL , Dockerized
 * **ORM:** Prisma
 * **Tooling:** pnpm, turborepo
 
