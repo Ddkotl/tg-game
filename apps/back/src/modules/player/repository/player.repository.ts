@@ -6,14 +6,19 @@ import { PrismaService } from "../../prisma/prisma.service";
 export class PlayerRepository {
   constructor(private prisma: PrismaService) {}
 
-  async findByTelegramId(telegramId: string): Promise<Player & { stats: Stats | null } | null> {
+  async findByTelegramId(
+    telegramId: string,
+  ): Promise<(Player & { stats: Stats | null }) | null> {
     return this.prisma.player.findUnique({
       where: { telegramId },
       include: { stats: true },
     });
   }
 
-  async create(data: { telegramId: string; username?: string }): Promise<Player & { stats: Stats }> {
+  async create(data: {
+    telegramId: string;
+    username?: string;
+  }): Promise<Player & { stats: Stats }> {
     return this.prisma.player.create({
       data: {
         telegramId: data.telegramId,
@@ -26,7 +31,10 @@ export class PlayerRepository {
     });
   }
 
-  async findOrCreateByTelegramId(telegramId: string, username?: string): Promise<Player & { stats: Stats | null }> {
+  async findOrCreateByTelegramId(
+    telegramId: string,
+    username?: string,
+  ): Promise<Player & { stats: Stats | null }> {
     let player = await this.findByTelegramId(telegramId);
     if (!player) {
       player = await this.create({ telegramId, username });
