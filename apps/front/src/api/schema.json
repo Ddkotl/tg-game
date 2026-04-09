@@ -61,6 +61,38 @@
           "Health"
         ]
       }
+    },
+    "/v1/auth/telegram": {
+      "post": {
+        "operationId": "AuthController_authenticate",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TelegramAuthDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authenticated player",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Authenticate Telegram Web App initData",
+        "tags": [
+          "auth"
+        ]
+      }
     }
   },
   "info": {
@@ -87,6 +119,18 @@
         "required": [
           "data",
           "error"
+        ]
+      },
+      "TelegramAuthDto": {
+        "type": "object",
+        "properties": {
+          "initData": {
+            "type": "string",
+            "description": "Telegram Web App initData string"
+          }
+        },
+        "required": [
+          "initData"
         ]
       }
     }

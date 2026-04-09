@@ -1,7 +1,7 @@
 import {
-    BadRequestException,
-    Injectable,
-    InternalServerErrorException,
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
 } from "@nestjs/common";
 import { createHash, createHmac, timingSafeEqual } from "crypto";
 import { PlayerDto } from "../player/dto/player.dto";

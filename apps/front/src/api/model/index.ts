@@ -8,4 +8,5 @@
 
 export * from './apiResponseDto';
 export * from './apiResponseDtoData';
+export * from './telegramAuthDto';
 export * from './userControllerGetUserParams';

@@ -6,22 +6,27 @@
  * OpenAPI spec version: 1.0
  */
 import {
+  useMutation,
   useQuery
 } from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
+  MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult
 } from '@tanstack/react-query';
 
 import type {
   ApiResponseDto,
+  TelegramAuthDto,
   UserControllerGetUserParams
 } from './model';
 
@@ -261,3 +266,96 @@ export function useHealthControllerGetHealth<TData = Awaited<ReturnType<typeof h
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+
+
+
+
+/**
+ * @summary Authenticate Telegram Web App initData
+ */
+export type authControllerAuthenticateResponse200 = {
+  data: ApiResponseDto
+  status: 200
+}
+
+export type authControllerAuthenticateResponseSuccess = (authControllerAuthenticateResponse200) & {
+  headers: Headers;
+};
+;
+
+export type authControllerAuthenticateResponse = (authControllerAuthenticateResponseSuccess)
+
+export const getAuthControllerAuthenticateUrl = () => {
+
+
+
+
+  return `/v1/auth/telegram`
+}
+
+export const authControllerAuthenticate = async (telegramAuthDto: TelegramAuthDto, options?: RequestInit): Promise<authControllerAuthenticateResponse> => {
+
+  const res = await fetch(getAuthControllerAuthenticateUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      telegramAuthDto,)
+  }
+)
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+  const data: authControllerAuthenticateResponse['data'] = body ? JSON.parse(body) : {}
+  return { data, status: res.status, headers: res.headers } as authControllerAuthenticateResponse
+}
+
+
+
+
+export const getAuthControllerAuthenticateMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof authControllerAuthenticate>>, TError,{data: TelegramAuthDto}, TContext>, fetch?: RequestInit}
+): UseMutationOptions<Awaited<ReturnType<typeof authControllerAuthenticate>>, TError,{data: TelegramAuthDto}, TContext> => {
+
+const mutationKey = ['authControllerAuthenticate'];
+const {mutation: mutationOptions, fetch: fetchOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, fetch: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof authControllerAuthenticate>>, {data: TelegramAuthDto}> = (props) => {
+          const {data} = props ?? {};
+
+          return  authControllerAuthenticate(data,fetchOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AuthControllerAuthenticateMutationResult = NonNullable<Awaited<ReturnType<typeof authControllerAuthenticate>>>
+    export type AuthControllerAuthenticateMutationBody = TelegramAuthDto
+    export type AuthControllerAuthenticateMutationError = unknown
+
+    /**
+ * @summary Authenticate Telegram Web App initData
+ */
+export const useAuthControllerAuthenticate = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof authControllerAuthenticate>>, TError,{data: TelegramAuthDto}, TContext>, fetch?: RequestInit}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof authControllerAuthenticate>>,
+        TError,
+        {data: TelegramAuthDto},
+        TContext
+      > => {
+      return useMutation(getAuthControllerAuthenticateMutationOptions(options), queryClient);
+    }
