@@ -9,11 +9,11 @@ RUN npm install -g pnpm
 # Copy workspace/root configuration files
 COPY pnpm-lock.yaml pnpm-workspace.yaml turbo.json package.json ./
 
-# Copy all app files
-COPY apps ./apps
+# Copy frontend app files
+COPY apps/front ./apps/front
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Install only frontend dependencies
+RUN pnpm install --frozen-lockfile --filter front
 
 # Build the frontend app
 WORKDIR /app/apps/front

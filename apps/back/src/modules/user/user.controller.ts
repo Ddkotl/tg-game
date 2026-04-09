@@ -1,4 +1,4 @@
-import { Controller, Get, Query } from "@nestjs/common";
+import { BadRequestException, Controller, Get, Query } from "@nestjs/common";
 import { ApiOperation, ApiResponse } from "@nestjs/swagger";
 import { ApiResponseDto } from "../health/dto/health-response.dto";
 import { UserDto } from "./dto/user.dto";
@@ -19,6 +19,9 @@ export class UserController {
     @Query("telegramId") telegramId: string,
     @Query("username") username?: string,
   ): Promise<ApiResponseDto<UserDto>> {
+    if (!telegramId) {
+      throw new BadRequestException("telegramId is required");
+    }
     const user = await this.userService.findOrCreateByTelegramId(
       telegramId,
       username,

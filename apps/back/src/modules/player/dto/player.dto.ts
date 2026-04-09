@@ -27,8 +27,11 @@ export class PlayerDto {
   @ApiProperty()
   username: string | null;
 
-  @ApiProperty()
+  @ApiProperty({ type: String, format: "date-time" })
   createdAt: Date;
+
+  @ApiProperty({ type: String, format: "date-time", nullable: true })
+  meditationStartedAt: Date | null;
 
   @ApiProperty({ type: StatsDto, nullable: true })
   stats: StatsDto | null;

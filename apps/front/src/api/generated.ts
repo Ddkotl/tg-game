@@ -26,7 +26,10 @@ import type {
 
 import type {
   ApiResponseDto,
+  AttackDto,
+  PlayerControllerGetLeaderboardParams,
   TelegramAuthDto,
+  UpgradeStatsDto,
   UserControllerGetUserParams
 } from './model';
 
@@ -270,6 +273,602 @@ export function useHealthControllerGetHealth<TData = Awaited<ReturnType<typeof h
 
 
 
+
+/**
+ * @summary Get leaderboard by total stats
+ */
+export type playerControllerGetLeaderboardResponse200 = {
+  data: ApiResponseDto
+  status: 200
+}
+
+export type playerControllerGetLeaderboardResponseSuccess = (playerControllerGetLeaderboardResponse200) & {
+  headers: Headers;
+};
+;
+
+export type playerControllerGetLeaderboardResponse = (playerControllerGetLeaderboardResponseSuccess)
+
+export const getPlayerControllerGetLeaderboardUrl = (params?: PlayerControllerGetLeaderboardParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/v1/player/leaderboard?${stringifiedParams}` : `/v1/player/leaderboard`
+}
+
+export const playerControllerGetLeaderboard = async (params?: PlayerControllerGetLeaderboardParams, options?: RequestInit): Promise<playerControllerGetLeaderboardResponse> => {
+
+  const res = await fetch(getPlayerControllerGetLeaderboardUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+)
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+  const data: playerControllerGetLeaderboardResponse['data'] = body ? JSON.parse(body) : {}
+  return { data, status: res.status, headers: res.headers } as playerControllerGetLeaderboardResponse
+}
+
+
+
+
+
+export const getPlayerControllerGetLeaderboardQueryKey = (params?: PlayerControllerGetLeaderboardParams,) => {
+    return [
+    `/v1/player/leaderboard`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getPlayerControllerGetLeaderboardQueryOptions = <TData = Awaited<ReturnType<typeof playerControllerGetLeaderboard>>, TError = unknown>(params?: PlayerControllerGetLeaderboardParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof playerControllerGetLeaderboard>>, TError, TData>>, fetch?: RequestInit}
+) => {
+
+const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getPlayerControllerGetLeaderboardQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof playerControllerGetLeaderboard>>> = ({ signal }) => playerControllerGetLeaderboard(params, { signal, ...fetchOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof playerControllerGetLeaderboard>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type PlayerControllerGetLeaderboardQueryResult = NonNullable<Awaited<ReturnType<typeof playerControllerGetLeaderboard>>>
+export type PlayerControllerGetLeaderboardQueryError = unknown
+
+
+export function usePlayerControllerGetLeaderboard<TData = Awaited<ReturnType<typeof playerControllerGetLeaderboard>>, TError = unknown>(
+ params: undefined |  PlayerControllerGetLeaderboardParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof playerControllerGetLeaderboard>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof playerControllerGetLeaderboard>>,
+          TError,
+          Awaited<ReturnType<typeof playerControllerGetLeaderboard>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePlayerControllerGetLeaderboard<TData = Awaited<ReturnType<typeof playerControllerGetLeaderboard>>, TError = unknown>(
+ params?: PlayerControllerGetLeaderboardParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof playerControllerGetLeaderboard>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof playerControllerGetLeaderboard>>,
+          TError,
+          Awaited<ReturnType<typeof playerControllerGetLeaderboard>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePlayerControllerGetLeaderboard<TData = Awaited<ReturnType<typeof playerControllerGetLeaderboard>>, TError = unknown>(
+ params?: PlayerControllerGetLeaderboardParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof playerControllerGetLeaderboard>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get leaderboard by total stats
+ */
+
+export function usePlayerControllerGetLeaderboard<TData = Awaited<ReturnType<typeof playerControllerGetLeaderboard>>, TError = unknown>(
+ params?: PlayerControllerGetLeaderboardParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof playerControllerGetLeaderboard>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getPlayerControllerGetLeaderboardQueryOptions(params,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+/**
+ * @summary Get player profile by id
+ */
+export type playerControllerGetProfileResponse200 = {
+  data: ApiResponseDto
+  status: 200
+}
+
+export type playerControllerGetProfileResponseSuccess = (playerControllerGetProfileResponse200) & {
+  headers: Headers;
+};
+;
+
+export type playerControllerGetProfileResponse = (playerControllerGetProfileResponseSuccess)
+
+export const getPlayerControllerGetProfileUrl = (id: string,) => {
+
+
+
+
+  return `/v1/player/${id}`
+}
+
+export const playerControllerGetProfile = async (id: string, options?: RequestInit): Promise<playerControllerGetProfileResponse> => {
+
+  const res = await fetch(getPlayerControllerGetProfileUrl(id),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+)
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+  const data: playerControllerGetProfileResponse['data'] = body ? JSON.parse(body) : {}
+  return { data, status: res.status, headers: res.headers } as playerControllerGetProfileResponse
+}
+
+
+
+
+
+export const getPlayerControllerGetProfileQueryKey = (id: string,) => {
+    return [
+    `/v1/player/${id}`
+    ] as const;
+    }
+
+
+export const getPlayerControllerGetProfileQueryOptions = <TData = Awaited<ReturnType<typeof playerControllerGetProfile>>, TError = unknown>(id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof playerControllerGetProfile>>, TError, TData>>, fetch?: RequestInit}
+) => {
+
+const {query: queryOptions, fetch: fetchOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getPlayerControllerGetProfileQueryKey(id);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof playerControllerGetProfile>>> = ({ signal }) => playerControllerGetProfile(id, { signal, ...fetchOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof playerControllerGetProfile>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type PlayerControllerGetProfileQueryResult = NonNullable<Awaited<ReturnType<typeof playerControllerGetProfile>>>
+export type PlayerControllerGetProfileQueryError = unknown
+
+
+export function usePlayerControllerGetProfile<TData = Awaited<ReturnType<typeof playerControllerGetProfile>>, TError = unknown>(
+ id: string, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof playerControllerGetProfile>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof playerControllerGetProfile>>,
+          TError,
+          Awaited<ReturnType<typeof playerControllerGetProfile>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePlayerControllerGetProfile<TData = Awaited<ReturnType<typeof playerControllerGetProfile>>, TError = unknown>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof playerControllerGetProfile>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof playerControllerGetProfile>>,
+          TError,
+          Awaited<ReturnType<typeof playerControllerGetProfile>>
+        > , 'initialData'
+      >, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function usePlayerControllerGetProfile<TData = Awaited<ReturnType<typeof playerControllerGetProfile>>, TError = unknown>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof playerControllerGetProfile>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get player profile by id
+ */
+
+export function usePlayerControllerGetProfile<TData = Awaited<ReturnType<typeof playerControllerGetProfile>>, TError = unknown>(
+ id: string, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof playerControllerGetProfile>>, TError, TData>>, fetch?: RequestInit}
+ , queryClient?: QueryClient
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getPlayerControllerGetProfileQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+
+/**
+ * @summary Start meditation for a player
+ */
+export type playerControllerStartMeditationResponse200 = {
+  data: ApiResponseDto
+  status: 200
+}
+
+export type playerControllerStartMeditationResponseSuccess = (playerControllerStartMeditationResponse200) & {
+  headers: Headers;
+};
+;
+
+export type playerControllerStartMeditationResponse = (playerControllerStartMeditationResponseSuccess)
+
+export const getPlayerControllerStartMeditationUrl = (id: string,) => {
+
+
+
+
+  return `/v1/player/${id}/meditation/start`
+}
+
+export const playerControllerStartMeditation = async (id: string, options?: RequestInit): Promise<playerControllerStartMeditationResponse> => {
+
+  const res = await fetch(getPlayerControllerStartMeditationUrl(id),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+)
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+  const data: playerControllerStartMeditationResponse['data'] = body ? JSON.parse(body) : {}
+  return { data, status: res.status, headers: res.headers } as playerControllerStartMeditationResponse
+}
+
+
+
+
+export const getPlayerControllerStartMeditationMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof playerControllerStartMeditation>>, TError,{id: string}, TContext>, fetch?: RequestInit}
+): UseMutationOptions<Awaited<ReturnType<typeof playerControllerStartMeditation>>, TError,{id: string}, TContext> => {
+
+const mutationKey = ['playerControllerStartMeditation'];
+const {mutation: mutationOptions, fetch: fetchOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, fetch: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof playerControllerStartMeditation>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  playerControllerStartMeditation(id,fetchOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PlayerControllerStartMeditationMutationResult = NonNullable<Awaited<ReturnType<typeof playerControllerStartMeditation>>>
+
+    export type PlayerControllerStartMeditationMutationError = unknown
+
+    /**
+ * @summary Start meditation for a player
+ */
+export const usePlayerControllerStartMeditation = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof playerControllerStartMeditation>>, TError,{id: string}, TContext>, fetch?: RequestInit}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof playerControllerStartMeditation>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+      return useMutation(getPlayerControllerStartMeditationMutationOptions(options), queryClient);
+    }
+
+/**
+ * @summary Claim meditation rewards
+ */
+export type playerControllerClaimMeditationResponse200 = {
+  data: ApiResponseDto
+  status: 200
+}
+
+export type playerControllerClaimMeditationResponseSuccess = (playerControllerClaimMeditationResponse200) & {
+  headers: Headers;
+};
+;
+
+export type playerControllerClaimMeditationResponse = (playerControllerClaimMeditationResponseSuccess)
+
+export const getPlayerControllerClaimMeditationUrl = (id: string,) => {
+
+
+
+
+  return `/v1/player/${id}/meditation/claim`
+}
+
+export const playerControllerClaimMeditation = async (id: string, options?: RequestInit): Promise<playerControllerClaimMeditationResponse> => {
+
+  const res = await fetch(getPlayerControllerClaimMeditationUrl(id),
+  {
+    ...options,
+    method: 'POST'
+
+
+  }
+)
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+  const data: playerControllerClaimMeditationResponse['data'] = body ? JSON.parse(body) : {}
+  return { data, status: res.status, headers: res.headers } as playerControllerClaimMeditationResponse
+}
+
+
+
+
+export const getPlayerControllerClaimMeditationMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof playerControllerClaimMeditation>>, TError,{id: string}, TContext>, fetch?: RequestInit}
+): UseMutationOptions<Awaited<ReturnType<typeof playerControllerClaimMeditation>>, TError,{id: string}, TContext> => {
+
+const mutationKey = ['playerControllerClaimMeditation'];
+const {mutation: mutationOptions, fetch: fetchOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, fetch: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof playerControllerClaimMeditation>>, {id: string}> = (props) => {
+          const {id} = props ?? {};
+
+          return  playerControllerClaimMeditation(id,fetchOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PlayerControllerClaimMeditationMutationResult = NonNullable<Awaited<ReturnType<typeof playerControllerClaimMeditation>>>
+
+    export type PlayerControllerClaimMeditationMutationError = unknown
+
+    /**
+ * @summary Claim meditation rewards
+ */
+export const usePlayerControllerClaimMeditation = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof playerControllerClaimMeditation>>, TError,{id: string}, TContext>, fetch?: RequestInit}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof playerControllerClaimMeditation>>,
+        TError,
+        {id: string},
+        TContext
+      > => {
+      return useMutation(getPlayerControllerClaimMeditationMutationOptions(options), queryClient);
+    }
+
+/**
+ * @summary Upgrade player stats
+ */
+export type playerControllerUpgradeStatsResponse200 = {
+  data: ApiResponseDto
+  status: 200
+}
+
+export type playerControllerUpgradeStatsResponseSuccess = (playerControllerUpgradeStatsResponse200) & {
+  headers: Headers;
+};
+;
+
+export type playerControllerUpgradeStatsResponse = (playerControllerUpgradeStatsResponseSuccess)
+
+export const getPlayerControllerUpgradeStatsUrl = (id: string,) => {
+
+
+
+
+  return `/v1/player/${id}/upgrade`
+}
+
+export const playerControllerUpgradeStats = async (id: string,
+    upgradeStatsDto: UpgradeStatsDto, options?: RequestInit): Promise<playerControllerUpgradeStatsResponse> => {
+
+  const res = await fetch(getPlayerControllerUpgradeStatsUrl(id),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      upgradeStatsDto,)
+  }
+)
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+  const data: playerControllerUpgradeStatsResponse['data'] = body ? JSON.parse(body) : {}
+  return { data, status: res.status, headers: res.headers } as playerControllerUpgradeStatsResponse
+}
+
+
+
+
+export const getPlayerControllerUpgradeStatsMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof playerControllerUpgradeStats>>, TError,{id: string;data: UpgradeStatsDto}, TContext>, fetch?: RequestInit}
+): UseMutationOptions<Awaited<ReturnType<typeof playerControllerUpgradeStats>>, TError,{id: string;data: UpgradeStatsDto}, TContext> => {
+
+const mutationKey = ['playerControllerUpgradeStats'];
+const {mutation: mutationOptions, fetch: fetchOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, fetch: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof playerControllerUpgradeStats>>, {id: string;data: UpgradeStatsDto}> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  playerControllerUpgradeStats(id,data,fetchOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type PlayerControllerUpgradeStatsMutationResult = NonNullable<Awaited<ReturnType<typeof playerControllerUpgradeStats>>>
+    export type PlayerControllerUpgradeStatsMutationBody = UpgradeStatsDto
+    export type PlayerControllerUpgradeStatsMutationError = unknown
+
+    /**
+ * @summary Upgrade player stats
+ */
+export const usePlayerControllerUpgradeStats = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof playerControllerUpgradeStats>>, TError,{id: string;data: UpgradeStatsDto}, TContext>, fetch?: RequestInit}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof playerControllerUpgradeStats>>,
+        TError,
+        {id: string;data: UpgradeStatsDto},
+        TContext
+      > => {
+      return useMutation(getPlayerControllerUpgradeStatsMutationOptions(options), queryClient);
+    }
+
+/**
+ * @summary Attack another player
+ */
+export type battleControllerAttackResponse200 = {
+  data: ApiResponseDto
+  status: 200
+}
+
+export type battleControllerAttackResponseSuccess = (battleControllerAttackResponse200) & {
+  headers: Headers;
+};
+;
+
+export type battleControllerAttackResponse = (battleControllerAttackResponseSuccess)
+
+export const getBattleControllerAttackUrl = () => {
+
+
+
+
+  return `/v1/battle/attack`
+}
+
+export const battleControllerAttack = async (attackDto: AttackDto, options?: RequestInit): Promise<battleControllerAttackResponse> => {
+
+  const res = await fetch(getBattleControllerAttackUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      attackDto,)
+  }
+)
+
+  const body = [204, 205, 304].includes(res.status) ? null : await res.text();
+
+  const data: battleControllerAttackResponse['data'] = body ? JSON.parse(body) : {}
+  return { data, status: res.status, headers: res.headers } as battleControllerAttackResponse
+}
+
+
+
+
+export const getBattleControllerAttackMutationOptions = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof battleControllerAttack>>, TError,{data: AttackDto}, TContext>, fetch?: RequestInit}
+): UseMutationOptions<Awaited<ReturnType<typeof battleControllerAttack>>, TError,{data: AttackDto}, TContext> => {
+
+const mutationKey = ['battleControllerAttack'];
+const {mutation: mutationOptions, fetch: fetchOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, fetch: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof battleControllerAttack>>, {data: AttackDto}> = (props) => {
+          const {data} = props ?? {};
+
+          return  battleControllerAttack(data,fetchOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type BattleControllerAttackMutationResult = NonNullable<Awaited<ReturnType<typeof battleControllerAttack>>>
+    export type BattleControllerAttackMutationBody = AttackDto
+    export type BattleControllerAttackMutationError = unknown
+
+    /**
+ * @summary Attack another player
+ */
+export const useBattleControllerAttack = <TError = unknown,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof battleControllerAttack>>, TError,{data: AttackDto}, TContext>, fetch?: RequestInit}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof battleControllerAttack>>,
+        TError,
+        {data: AttackDto},
+        TContext
+      > => {
+      return useMutation(getBattleControllerAttackMutationOptions(options), queryClient);
+    }
 
 /**
  * @summary Authenticate Telegram Web App initData

@@ -11,18 +11,32 @@ datasource db {
 }
 
 model Player {
-  id         String   @id @default(cuid())
-  telegramId String?  @unique
-  username   String?
-  createdAt  DateTime @default(now())
-  stats      Stats?
+  id                    String   @id @default(uuid())
+  telegramId            String?  @unique
+  username              String
+  createdAt             DateTime @default(now())
+  meditationStartedAt   DateTime?
+  stats                 Stats?
+  attackLogs            BattleLog[] @relation("attackerLogs")
+  defenseLogs           BattleLog[] @relation("defenderLogs")
 }
 
 model Stats {
-  id       String @id @default(cuid())
+  id       String @id @default(uuid())
   playerId String @unique
   strength Int    @default(10)
   defense  Int    @default(10)
   energy   Int    @default(100)
   player   Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+}
+
+model BattleLog {
+  id         String   @id @default(uuid())
+  attackerId String
+  defenderId String
+  result     String
+  createdAt  DateTime @default(now())
+
+  attacker Player @relation("attackerLogs", fields: [attackerId], references: [id])
+  defender Player @relation("defenderLogs", fields: [defenderId], references: [id])
 }

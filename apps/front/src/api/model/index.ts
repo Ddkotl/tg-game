@@ -8,5 +8,9 @@
 
 export * from './apiResponseDto';
 export * from './apiResponseDtoData';
+export * from './attackDto';
+export * from './playerControllerGetLeaderboardParams';
 export * from './telegramAuthDto';
+export * from './upgradeStatsDto';
+export * from './upgradeStatsDtoStat';
 export * from './userControllerGetUserParams';

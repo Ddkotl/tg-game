@@ -62,6 +62,211 @@
         ]
       }
     },
+    "/v1/player/leaderboard": {
+      "get": {
+        "operationId": "PlayerController_getLeaderboard",
+        "parameters": [
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get leaderboard by total stats",
+        "tags": [
+          "player"
+        ]
+      }
+    },
+    "/v1/player/{id}": {
+      "get": {
+        "operationId": "PlayerController_getProfile",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get player profile by id",
+        "tags": [
+          "player"
+        ]
+      }
+    },
+    "/v1/player/{id}/meditation/start": {
+      "post": {
+        "operationId": "PlayerController_startMeditation",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Start meditation for a player",
+        "tags": [
+          "player"
+        ]
+      }
+    },
+    "/v1/player/{id}/meditation/claim": {
+      "post": {
+        "operationId": "PlayerController_claimMeditation",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Claim meditation rewards",
+        "tags": [
+          "player"
+        ]
+      }
+    },
+    "/v1/player/{id}/upgrade": {
+      "post": {
+        "operationId": "PlayerController_upgradeStats",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpgradeStatsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Upgrade player stats",
+        "tags": [
+          "player"
+        ]
+      }
+    },
+    "/v1/battle/attack": {
+      "post": {
+        "operationId": "BattleController_attack",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttackDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Attack another player",
+        "tags": [
+          "battle"
+        ]
+      }
+    },
     "/v1/auth/telegram": {
       "post": {
         "operationId": "AuthController_authenticate",
@@ -119,6 +324,43 @@
         "required": [
           "data",
           "error"
+        ]
+      },
+      "UpgradeStatsDto": {
+        "type": "object",
+        "properties": {
+          "stat": {
+            "type": "string",
+            "enum": [
+              "strength",
+              "defense"
+            ]
+          },
+          "points": {
+            "type": "number",
+            "description": "Number of points to add"
+          }
+        },
+        "required": [
+          "stat",
+          "points"
+        ]
+      },
+      "AttackDto": {
+        "type": "object",
+        "properties": {
+          "attackerId": {
+            "type": "string",
+            "description": "Attacker player id"
+          },
+          "defenderId": {
+            "type": "string",
+            "description": "Defender player id"
+          }
+        },
+        "required": [
+          "attackerId",
+          "defenderId"
         ]
       },
       "TelegramAuthDto": {

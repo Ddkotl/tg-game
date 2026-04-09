@@ -8,11 +8,11 @@ RUN npm install -g pnpm
 # Copy workspace/root configuration files
 COPY pnpm-lock.yaml pnpm-workspace.yaml turbo.json package.json ./
 
-# Copy all app files
-COPY apps ./apps
+# Copy backend app files
+COPY apps/back ./apps/back
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Install only backend dependencies
+RUN pnpm install --frozen-lockfile --filter back
 
 # Generate Prisma client
 RUN cd apps/back && pnpm prisma generate
