@@ -1,555 +1,118 @@
-# GitHub Copilot Instructions for AI Agent Development
+# Copilot Instructions (AI Agent)
 
 ---
 
-## 1. Project Overview
+## 1) Overview
 
-Text-based RPG (browser-style) delivered initially via **Telegram Mini App**, with planned expansion to additional platforms and authentication methods.
+RPG (Telegram Mini App first)
 
-### Tech Stack
-
-* **Backend:** TypeScript, NestJS
-* **Frontend:** React (Vite)
-* **UI:** shadcn/ui
-* **Database:** PostgreSQL
-* **ORM:** Prisma
-* **Tooling:** pnpm, turborepo
+* Back: TS, NestJS
+* Front: React (Vite), shadcn/ui
+* DB: PostgreSQL (Docker)
+* ORM: Prisma
+* Tooling: pnpm, turborepo
 
 ---
 
-## 2. Monorepo Strategy (STRICT)
+## 2) Monorepo (STRICT)
 
-### Purpose
-
-The monorepo exists ONLY for:
-
-* unified tooling
-* shared scripts
-* CI/CD consistency
-
-It is **NOT** used for sharing application logic.
-
----
-
-### 2.1 Structure
+**Only:** tooling, scripts, CI/CD. **No shared app logic.**
 
 ```
 repo/
-  apps/
-    back/        # NestJS backend (isolated)
-    front/       # React frontend (isolated)
+  apps/{back,front}
   package.json
   tsconfig.base.json
 ```
 
----
+* ❌ front↔back imports, shared domain logic, Prisma in frontend
+* ✅ shared configs/scripts; optional DTO-like types (no logic)
 
-### 2.2 Isolation Rules (CRITICAL)
+```
+{ "scripts": { "dev": "turbo run dev", "build": "turbo run build", "lint": "turbo run lint", "test": "turbo run test" } }
+```
 
-#### ❌ Forbidden
-
-* Importing backend code into frontend
-* Importing frontend code into backend
-* Sharing business logic between apps
-* Using Prisma models/types in frontend
-
-#### ✅ Allowed
-
-* Shared configs (tsconfig, eslint, prettier)
-* Shared scripts
-* Optional shared types ONLY IF:
-
-  * transport-level (DTO-like)
-  * no business logic
-  * no dependency on backend internals
-
-> If unsure → DO NOT SHARE
+* pnpm workspaces + turborepo; apps independent
 
 ---
 
-### 2.3 Root Configuration
-
-#### package.json
+## 3) Backend (NestJS)
 
 ```
-{
-  "scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
-    "lint": "turbo run lint",
-    "test": "turbo run test"
-  }
-}
+feature/{*.module,*.controller,*.service,dto/,entities/,repository/}
 ```
 
-#### Requirements
-
-* pnpm workspaces
-* turborepo orchestration
-* apps must be independently buildable and deployable
+* Controller: validation + delegate
+* Service: business logic; ❌ no Prisma
+* Repository: Prisma access
+* DTO: class-validator, strict
 
 ---
 
-## 3. Backend Architecture (NestJS)
-
-### 3.1 Principles
-
-* Modular (feature-based)
-* Layered separation
-* Business logic isolated in services
-
-### 3.2 Structure
+## 4) Frontend (React)
 
 ```
-feature/
-  feature.module.ts
-  feature.controller.ts
-  feature.service.ts
-  dto/
-  entities/
-  repository/
+src/{components,features,pages,hooks,lib}
 ```
 
-### 3.3 Rules
-
-#### Controllers
-
-* No business logic
-* Validation + delegation only
-
-#### Services
-
-* Contain all business logic
-* Must NOT access Prisma directly
-
-#### Repositories
-
-* Wrap Prisma
-* Return domain-safe data
-
-#### Validation
-
-* class-validator required
-* strict DTOs
+* Typed props; no business logic in JSX
+* Server: React Query; Local: useState/useReducer
+* UI: shadcn/ui only
 
 ---
 
-## 4. Frontend Architecture (React)
+## 5) Game Rules
 
-### 4.1 Principles
+Domains: Player, Stats, Inventory, Combat, Quests
 
-* Functional components only
-* Clear separation of concerns
-
-### 4.2 Structure
-
-```
-src/
-  components/   # UI (dumb)
-  features/     # logic
-  pages/
-  hooks/
-  lib/
-```
-
-### 4.3 Rules
-
-#### Components
-
-* Fully typed props
-* No business logic in JSX
-
-#### State
-
-* Server state → React Query
-* Local state → useState / useReducer
-
-#### UI
-
-* shadcn/ui only
-* No custom UI unless justified
+* Logic in backend; deterministic; zero-trust client
 
 ---
 
-## 5. Game Architecture
+## 6) Auth
 
-### Core Domains
-
-* Player
-* Stats
-* Inventory
-* Combat
-* Quests
-
-### Rules
-
-* ALL logic in backend
-* Frontend = renderer only
-* Deterministic calculations
-* Zero trust to client
+* MVP: Telegram WebApp (validate initData)
+* Design extensible (email/OAuth later)
 
 ---
 
-## 6. Authentication
+## 7) API
 
-### MVP
-
-* Telegram WebApp auth
-* initData validation on backend
-
-### Future
-
-* Email/password
-* OAuth providers
-
-Design must be extensible from start.
-
----
-
-## 7. API Design
-
-### Style
-
-* REST (initial)
-* Versioned: `/v1`
-
-### Response Format
+* REST, `/v1`
 
 ```
-{
-  data: T,
-  error: string | null
-}
+{ data: T, error: string | null }
 ```
 
 ---
 
-## 8. Infrastructure & DevOps (Docker + CI/CD)
+## 8) DevOps
 
-### 8.1 Docker (MANDATORY)
+**Docker (MANDATORY)**: back, front, db; Dockerfile per app; docker-compose; `.env`; use service names (no localhost)
 
-All parts of the system MUST run in Docker containers.
-
-#### Services
-
-* backend (NestJS)
-* frontend (React)
-* database (PostgreSQL)
-
-#### Requirements
-
-* Each app must have its own `Dockerfile`
-* Use `docker-compose` for local development
-* Environment variables via `.env`
-
-#### Example structure
-
-```
-repo/
-  docker-compose.yml
-  apps/
-    back/
-      Dockerfile
-    front/
-      Dockerfile
-```
-
-#### Rules
-
-* Containers must be independently buildable
-* No local machine dependencies
-* Database must be dockerized (PostgreSQL)
+**CI (GitHub Actions)**: install → lint → build → test → docker-build; fail on error; pnpm cache
 
 ---
 
-### 8.2 Testing (REQUIRED)
+## 9) Prisma (STRICT)
 
-#### Backend
-
-* Unit tests for services
-* Integration tests for modules
-
-#### Frontend
-
-* Component tests (basic level for MVP)
-
-#### Rules
-
-* Tests must run in CI
-* Tests must not depend on local state
-
----
-
-### 8.3 CI/CD (GitHub Actions)
-
-CI/CD MUST be configured using GitHub Actions.
-
-#### Required pipelines
-
-1. **CI Pipeline** (on push / PR)
-
-* install dependencies
-* lint
-* build
-* run tests
-
-2. **Docker Build Pipeline**
-
-* build backend image
-* build frontend image
-
-#### Example jobs
-
-* `lint`
-* `build`
-* `test`
-* `docker-build`
-
-#### Rules
-
-* Pipeline must fail on any error
-* No skipped tests
-* Use caching where possible (pnpm cache)
-
----
-
-## 9. Prisma Guidelines (STRICT ENFORCEMENT)
-
-This section defines **non-negotiable rules** for Prisma usage. The AI agent MUST follow them exactly.
-
----
-
-### 9.1 Scope
-
-* Prisma is **backend-only**
-* Location: `apps/back`
-* NEVER used in frontend
-
----
-
-### 9.2 File Structure (MANDATORY)
-
-```
-apps/back/
-  prisma/
-    schema.prisma
-```
-
-* No alternative locations
-* No duplication
-
----
-
-### 9.3 Generator (LOCKED CONFIG)
-
-The generator MUST be EXACTLY:
-
-```
-generator client {
-  provider = "prisma-client-js"
-}
-```
-
-#### ❌ STRICTLY FORBIDDEN
-
-* `output` field
-* custom paths
-* multiple generators
-
----
-
-### 9.4 Installation Rules
-
-Prisma MUST be installed ONLY in backend:
-
-* `apps/back/package.json` contains:
-
-  * `prisma`
-  * `@prisma/client`
-
-#### ❌ FORBIDDEN
-
-* installing prisma in root
-* installing prisma in frontend
-
----
-
-### 9.5 Generation Rules
-
-Commands MUST be executed ONLY from backend directory:
-
-```
-cd apps/back
-pnpm prisma generate
-```
-
-#### ❌ FORBIDDEN
-
-* running prisma from root
-* running prisma from frontend
-
----
-
-### 9.6 Import Rules (STRICT)
-
-#### ✅ ONLY VALID IMPORT
-
-```ts
-import { PrismaClient } from '@prisma/client'
-```
-
-#### ❌ FORBIDDEN
-
-* relative imports to generated client
-* custom paths
-* imports from `prisma/generated`
-
----
-
-### 9.7 Usage Boundaries
-
-#### ✅ ALLOWED
-
-* Repository layer ONLY
-
-#### ❌ FORBIDDEN
-
-* Controllers using Prisma
-* Services using Prisma directly
-* Frontend using Prisma
-
----
-
-### 9.8 Type Usage Rules
-
-Prisma types are **NOT domain models**.
-
-#### ❌ FORBIDDEN
-
-* returning Prisma types from services
-* exposing Prisma types in API
-* using Prisma types in frontend
-
-#### ✅ REQUIRED
-
-* map Prisma → Domain
-* use DTOs in controllers
-
----
-
-### 9.9 Docker Rules
-
-* DB host MUST be service name (e.g. `db`)
-
-Example:
-
-```
-DATABASE_URL="postgresql://user:password@db:5432/app"
-```
-
-#### ❌ FORBIDDEN
-
-* localhost in docker
-
----
-
-### 9.10 Failure Auto-Fix Rules (FOR AI AGENT)
-
-If Prisma is broken, agent MUST:
-
-1. Remove incorrect generator config
-2. Remove custom output paths
-3. Ensure correct location (`apps/back/prisma`)
-4. Reinstall dependencies in backend
-5. Run:
-
-```
-pnpm prisma generate
-```
-
----
-
-### 9.11 Absolute Prohibitions (HARD STOP)
-
-* Sharing Prisma between apps
-* Using Prisma in frontend
-* Custom client output paths
-* Running Prisma outside backend
-
-If any of the above occurs → MUST BE FIXED IMMEDIATELY
-
----
-
-### 9.1 Location & Structure
-
-* Prisma MUST exist only in: `apps/back`
-* Schema location:
+**Scope**: backend-only (`apps/back`)
 
 ```
 apps/back/prisma/schema.prisma
 ```
 
-* Generated client must use default location (`node_modules`)
-
----
-
-### 9.2 Generator नियम (STRICT)
+**Generator (LOCKED)**
 
 ```
-generator client {
-  provider = "prisma-client-js"
-}
+generator client { provider = "prisma-client-js" }
 ```
 
-#### ❌ Forbidden
+* ❌ no `output` / custom paths
 
-* Custom output paths
-* Generated clients outside node_modules
+**Install**: only in `apps/back` (`prisma`, `@prisma/client`)
 
----
-
-### 9.3 Import Rules
-
-#### ✅ Allowed (backend only)
-
-```ts
-import { PrismaClient } from '@prisma/client'
-```
-
-#### ❌ Forbidden
-
-* Relative imports to generated client
-* Sharing Prisma client across apps
-* Using Prisma in frontend
-
----
-
-### 9.4 Architecture Separation
-
-Prisma types MUST NOT be used as domain models.
-
-#### ❌ Forbidden
-
-* Using Prisma models in business logic
-* Exposing Prisma types in API
-
-#### ✅ Required
-
-* Map Prisma → Domain models
-* Use DTOs for API layer
-
----
-
-### 9.5 Usage Pattern
-
-* Prisma only inside Repository layer
-* Services MUST NOT access Prisma directly
-
----
-
-### 9.6 Commands
-
-All Prisma commands MUST be executed from backend:
+**Commands (ONLY)**
 
 ```
 cd apps/back
@@ -558,121 +121,167 @@ pnpm prisma migrate dev
 pnpm prisma migrate deploy
 ```
 
----
+**Imports (ONLY)**
 
-### 9.7 Docker Integration
+```ts
+import { PrismaClient } from '@prisma/client'
+```
 
-* Database must be accessible via service name (not localhost)
-* Example:
+* ❌ no relative/custom imports; no frontend usage
+
+**Usage**: Repository only; Services/Controllers ❌ direct Prisma
+
+**Types**: ❌ expose Prisma types; map to domain; DTOs for API
+
+**Docker URL**
 
 ```
 DATABASE_URL="postgresql://user:password@db:5432/app"
 ```
 
----
+**Auto-fix (agent)**: reset generator → ensure path → reinstall deps → `prisma generate`
 
-### 9.8 Common Failure Cases (Prevent)
-
-* Missing `prisma generate`
-* Broken node_modules
-* Wrong working directory
-* Custom generator output
-
-AI agent MUST fix these automatically if detected.
+**Hard Stop**: sharing Prisma, frontend usage, custom output, running outside backend
 
 ---
 
-## 10. Performance Rules
+## 10) OpenAPI / Swagger (MANDATORY)
 
-* Avoid N+1 queries
-* Always paginate
-* Cache static data
-
----
-
-## 11. Testing Strategy
-
-* Unit tests → services
-* Integration tests → modules
-* Avoid excessive Prisma mocking
+* `@nestjs/swagger`; generate on boot
+* DTOs annotated with `@ApiProperty`
+* Docs: `/v1/docs` (JSON: `/v1/docs-json`)
+* No `any`; consistent responses
 
 ---
 
-## 12. Git Workflow
+## 11) Frontend API (Orval)
 
-### Commits
+**Source**: backend OpenAPI
 
-* feat:
-* fix:
-* refactor:
-* chore:
+**Install (front)**
 
-### Rules
+```
+pnpm add -D orval
+```
 
-* Small commits
-* Atomic changes
+**Config** `apps/front/orval.config.ts`
 
----
+```ts
+import { defineConfig } from 'orval'
+export default defineConfig({
+  api: {
+    input: process.env.API_URL || 'http://localhost:3000/v1/docs-json',
+    output: { target: './src/api/generated.ts', client: 'react-query', schemas: './src/api/model' },
+  },
+})
+```
 
-## 13. AI Agent Rules
+**Scripts (front)**
 
-### MUST NOT
+```
+{
+  "scripts": {
+    "api:generate": "orval",
+    "api:generate:watch": "orval --watch",
+    "api:clean": "rm -rf src/api/generated.ts src/api/model",
+    "api:regen": "pnpm api:clean && pnpm api:generate"
+  }
+}
+```
 
-* Rewrite large code sections without request
-* Introduce breaking changes silently
-* Violate architecture boundaries
-* Duplicate logic
+**Root (optional)**
 
-### SHOULD
+```
+{ "scripts": { "api:generate": "pnpm --filter front api:generate", "api:regen": "pnpm --filter front api:regen" } }
+```
 
-* Suggest improvements
-* Maintain consistency
-* Refactor when beneficial
-* Document complex logic
+**Rules**
 
----
+* ❌ no manual API types; ❌ no Prisma in frontend
+* Use generated hooks/clients only
 
-## 14. Definition of Done
-
-A task is complete when:
-
-* Code compiles
-* Types are correct
-* Lint passes
-* Logic is correct
-* Architecture rules respected
-
----
-
-## 15. Engineering Priorities
-
-Always prioritize:
-
-1. Maintainability
-2. Scalability
-3. Clarity
-4. Isolation of concerns
+**Workflow**: change DTOs → Swagger → `pnpm api:regen`
 
 ---
 
-## 16. Anti-Patterns (Hard Stop)
+## 12) Git Hooks (Husky)
+
+```
+pnpm add -D husky
+pnpm dlx husky-init
+pnpm set-script prepare "husky" && pnpm install
+```
+
+`.husky/pre-commit`
+
+```
+pnpm api:regen
+pnpm lint
+pnpm test
+```
+
+* Commit fails if API/types outdated
+
+---
+
+## 13) CI: OpenAPI Sync Check
+
+```
+- name: Generate API types
+  run: pnpm api:regen
+- name: Check for changes
+  run: |
+    if [ -n "$(git status --porcelain)" ]; then
+      echo "API types are outdated. Run pnpm api:regen"; exit 1; fi
+```
+
+---
+
+## 14) Performance
+
+* Avoid N+1; paginate; cache static
+
+---
+
+## 15) Testing
+
+* Unit (services); Integration (modules); minimal mocking
+
+---
+
+## 16) Git
+
+* Conventional commits; small, atomic
+
+---
+
+## 17) AI Rules
+
+**MUST NOT**: break architecture, large rewrites, silent breaking changes, duplicate logic
+**SHOULD**: consistency, simple explicit code, document complex parts
+
+---
+
+## 18) DoD
+
+* Compiles; types correct; lint passes; architecture respected
+
+---
+
+## 19) Priorities
+
+1. Maintainability 2) Scalability 3) Clarity 4) Isolation
+
+---
+
+## 20) Anti-Patterns (HARD STOP)
 
 * Business logic in frontend
-* Shared domain logic between apps
-* Direct DB access outside repository layer
-* Hidden side effects
-* Over-abstraction early
+* Shared domain logic
+* Direct DB access outside repositories
+* Hidden side effects; premature abstraction
 
 ---
 
-## Final Note
+**Note**: Design for independent scaling/splitting; avoid tech debt.
 
-This project is expected to evolve into a scalable multiplayer RPG system.
-
-All decisions must preserve the ability to:
-
-* split services
-* scale independently
-* evolve architecture without rewrites
-
-Avoid shortcuts that create long-term technical debt.
