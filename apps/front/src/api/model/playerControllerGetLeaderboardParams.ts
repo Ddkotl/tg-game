@@ -7,6 +7,6 @@
  */
 
 export type PlayerControllerGetLeaderboardParams = {
-limit?: number;
 page?: number;
+limit?: number;
 };

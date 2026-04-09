@@ -1,6 +1,20 @@
 {
   "openapi": "3.0.0",
   "paths": {
+    "/v1": {
+      "get": {
+        "operationId": "AppController_getHello",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
     "/v1/user": {
       "get": {
         "operationId": "UserController_getUser",
@@ -67,7 +81,7 @@
         "operationId": "PlayerController_getLeaderboard",
         "parameters": [
           {
-            "name": "limit",
+            "name": "page",
             "required": false,
             "in": "query",
             "schema": {
@@ -75,7 +89,7 @@
             }
           },
           {
-            "name": "page",
+            "name": "limit",
             "required": false,
             "in": "query",
             "schema": {

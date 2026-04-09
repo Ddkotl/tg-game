@@ -61,7 +61,9 @@ describe("BattleService", () => {
             findById: jest
               .fn()
               .mockImplementation((id) =>
-                Promise.resolve(id === "attacker-id" ? attackerMock : defenderMock),
+                Promise.resolve(
+                  id === "attacker-id" ? attackerMock : defenderMock,
+                ),
               ),
           },
         },
@@ -97,7 +99,9 @@ describe("BattleService", () => {
   });
 
   it("should throw if defender not found", async () => {
-    (playerRepository.findById as jest.Mock).mockResolvedValueOnce(attackerMock);
+    (playerRepository.findById as jest.Mock).mockResolvedValueOnce(
+      attackerMock,
+    );
     (playerRepository.findById as jest.Mock).mockResolvedValueOnce(null);
 
     await expect(service.attack("attacker-id", "missing-id")).rejects.toThrow(
