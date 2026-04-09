@@ -1,0 +1,28 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Player {
+  id         String   @id @default(cuid())
+  telegramId String?  @unique
+  username   String?
+  createdAt  DateTime @default(now())
+  stats      Stats?
+}
+
+model Stats {
+  id       String @id @default(cuid())
+  playerId String @unique
+  strength Int    @default(10)
+  defense  Int    @default(10)
+  energy   Int    @default(100)
+  player   Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+}

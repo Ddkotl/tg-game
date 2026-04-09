@@ -1,0 +1,20 @@
+{
+  "name": "tg-game",
+  "version": "1.0.0",
+  "private": false,
+  "packageManager": "pnpm@9.15.0",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "format": "pnpm --filter back format && pnpm --filter front format",
+    "test": "turbo run test",
+    "api:generate": "pnpm --filter back swagger:generate && pnpm --filter front api:generate",
+    "api:regen": "pnpm --filter back swagger:generate && pnpm --filter front api:regen",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "husky": "^8.0.0",
+    "turbo": "^2.0.0"
+  }
+}

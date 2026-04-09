@@ -1,0 +1,78 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    
+    # Общие переменные среды для всей джобы
+    env:
+      DATABASE_URL: postgresql://tg_game:password@localhost:5432/tg_game
+      NODE_ENV: test
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: tg_game
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: tg_game
+        ports:
+          - 5432:5432
+        # Важно: ждем, пока база будет готова принимать соединения
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Set up Node.js with caching
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Generate Prisma Client
+        run: cd apps/back && pnpm prisma generate
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Run Database Migrations
+        # Если база долго стартует, добавим небольшую паузу
+        run: |
+          sleep 3
+          cd apps/back && pnpm prisma migrate deploy
+
+      - name: Run Tests
+        run: pnpm test
+
+      - name: Build Projects
+        run: pnpm build
+
+  docker-delivery:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build back Docker image
+        run: docker build -f apps/back/Dockerfile -t tg-game-back .
+        
+      - name: Build front Docker image
+        run: docker build -f apps/front/Dockerfile -t tg-game-front .

@@ -1,0 +1,138 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/v1/user": {
+      "get": {
+        "operationId": "UserController_getUser",
+        "parameters": [
+          {
+            "name": "telegramId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "username",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User found or created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get or create user by Telegram ID",
+        "tags": [
+          "User"
+        ]
+      }
+    },
+    "/v1/health": {
+      "get": {
+        "operationId": "HealthController_getHealth",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Health status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get health status",
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/v1/auth/telegram": {
+      "post": {
+        "operationId": "AuthController_authenticate",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TelegramAuthDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Authenticated player",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Authenticate Telegram Web App initData",
+        "tags": [
+          "auth"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "TG Game API",
+    "description": "API for Telegram Game",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "schemas": {
+      "ApiResponseDto": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object"
+          },
+          "error": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "data",
+          "error"
+        ]
+      },
+      "TelegramAuthDto": {
+        "type": "object",
+        "properties": {
+          "initData": {
+            "type": "string",
+            "description": "Telegram Web App initData string"
+          }
+        },
+        "required": [
+          "initData"
+        ]
+      }
+    }
+  }
+}
