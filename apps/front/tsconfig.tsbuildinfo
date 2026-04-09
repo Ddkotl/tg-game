@@ -1,1 +1,1 @@
-{"root":["./src/App.tsx","./src/main.tsx"],"version":"5.9.3"}
+{"root":["./src/App.tsx","./src/main.tsx","./src/setupTests.ts","./src/api/generated.ts","./src/api/model/apiResponseDto.ts","./src/api/model/apiResponseDtoData.ts","./src/api/model/index.ts","./src/api/model/userControllerGetUserParams.ts"],"version":"5.9.3"}

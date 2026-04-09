@@ -6,11 +6,11 @@
 
 RPG (Telegram Mini App first)
 
-* Back: TS, NestJS
-* Front: React (Vite), shadcn/ui
-* DB: PostgreSQL (Docker)
-* ORM: Prisma
-* Tooling: pnpm, turborepo
+- Back: TS, NestJS
+- Front: React (Vite), shadcn/ui
+- DB: PostgreSQL (Docker)
+- ORM: Prisma
+- Tooling: pnpm, turborepo
 
 ---
 
@@ -25,14 +25,14 @@ repo/
   tsconfig.base.json
 ```
 
-* ❌ front↔back imports, shared domain logic, Prisma in frontend
-* ✅ shared configs/scripts; optional DTO-like types (no logic)
+- ❌ front↔back imports, shared domain logic, Prisma in frontend
+- ✅ shared configs/scripts; optional DTO-like types (no logic)
 
 ```
 { "scripts": { "dev": "turbo run dev", "build": "turbo run build", "lint": "turbo run lint", "test": "turbo run test" } }
 ```
 
-* pnpm workspaces + turborepo; apps independent
+- pnpm workspaces + turborepo; apps independent
 
 ---
 
@@ -42,10 +42,10 @@ repo/
 feature/{*.module,*.controller,*.service,dto/,entities/,repository/}
 ```
 
-* Controller: validation + delegate
-* Service: business logic; ❌ no Prisma
-* Repository: Prisma access
-* DTO: class-validator, strict
+- Controller: validation + delegate
+- Service: business logic; ❌ no Prisma
+- Repository: Prisma access
+- DTO: class-validator, strict
 
 ---
 
@@ -55,9 +55,9 @@ feature/{*.module,*.controller,*.service,dto/,entities/,repository/}
 src/{components,features,pages,hooks,lib}
 ```
 
-* Typed props; no business logic in JSX
-* Server: React Query; Local: useState/useReducer
-* UI: shadcn/ui only
+- Typed props; no business logic in JSX
+- Server: React Query; Local: useState/useReducer
+- UI: shadcn/ui only
 
 ---
 
@@ -65,20 +65,20 @@ src/{components,features,pages,hooks,lib}
 
 Domains: Player, Stats, Inventory, Combat, Quests
 
-* Logic in backend; deterministic; zero-trust client
+- Logic in backend; deterministic; zero-trust client
 
 ---
 
 ## 6) Auth
 
-* MVP: Telegram WebApp (validate initData)
-* Design extensible (email/OAuth later)
+- MVP: Telegram WebApp (validate initData)
+- Design extensible (email/OAuth later)
 
 ---
 
 ## 7) API
 
-* REST, `/v1`
+- REST, `/v1`
 
 ```
 { data: T, error: string | null }
@@ -108,7 +108,7 @@ apps/back/prisma/schema.prisma
 generator client { provider = "prisma-client-js" }
 ```
 
-* ❌ no `output` / custom paths
+- ❌ no `output` / custom paths
 
 **Install**: only in `apps/back` (`prisma`, `@prisma/client`)
 
@@ -124,10 +124,10 @@ pnpm prisma migrate deploy
 **Imports (ONLY)**
 
 ```ts
-import { PrismaClient } from '@prisma/client'
+import { PrismaClient } from "@prisma/client";
 ```
 
-* ❌ no relative/custom imports; no frontend usage
+- ❌ no relative/custom imports; no frontend usage
 
 **Usage**: Repository only; Services/Controllers ❌ direct Prisma
 
@@ -147,10 +147,10 @@ DATABASE_URL="postgresql://user:password@db:5432/app"
 
 ## 10) OpenAPI / Swagger (MANDATORY)
 
-* `@nestjs/swagger`; generate on boot
-* DTOs annotated with `@ApiProperty`
-* Docs: `/v1/docs` (JSON: `/v1/docs-json`)
-* No `any`; consistent responses
+- `@nestjs/swagger`; generate on boot
+- DTOs annotated with `@ApiProperty`
+- Docs: `/v1/docs` (JSON: `/v1/docs-json`)
+- No `any`; consistent responses
 
 ---
 
@@ -167,13 +167,17 @@ pnpm add -D orval
 **Config** `apps/front/orval.config.ts`
 
 ```ts
-import { defineConfig } from 'orval'
+import { defineConfig } from "orval";
 export default defineConfig({
   api: {
-    input: process.env.API_URL || 'http://localhost:3000/v1/docs-json',
-    output: { target: './src/api/generated.ts', client: 'react-query', schemas: './src/api/model' },
+    input: process.env.API_URL || "http://localhost:3000/v1/docs-json",
+    output: {
+      target: "./src/api/generated.ts",
+      client: "react-query",
+      schemas: "./src/api/model",
+    },
   },
-})
+});
 ```
 
 **Scripts (front)**
@@ -197,8 +201,8 @@ export default defineConfig({
 
 **Rules**
 
-* ❌ no manual API types; ❌ no Prisma in frontend
-* Use generated hooks/clients only
+- ❌ no manual API types; ❌ no Prisma in frontend
+- Use generated hooks/clients only
 
 **Workflow**: change DTOs → Swagger → `pnpm api:regen`
 
@@ -220,7 +224,7 @@ pnpm lint
 pnpm test
 ```
 
-* Commit fails if API/types outdated
+- Commit fails if API/types outdated
 
 ---
 
@@ -239,19 +243,56 @@ pnpm test
 
 ## 14) Performance
 
-* Avoid N+1; paginate; cache static
+- Avoid N+1; paginate; cache static
 
 ---
 
-## 15) Testing
+15. Testing (STRICT)
+    General Strategy
+    Goal: High confidence with low maintenance. Use AAA (Arrange, Act, Assert) pattern.
+    Unit (Services): Focus on complex business logic and edge cases.
+    Integration (Modules): Verify the "vertical slice" (Controller → Service → Repository → DB).
+    Minimal Mocking: Prefer real dependencies. Use Testcontainers or a dedicated Docker DB for integration tests. Mock only external unstable APIs (Telegram Bot API, Payment Gateways).
+    Backend (NestJS)
+    Unit Tests (_.spec.ts):
+    Test Services in isolation.
+    Mock Repository using simple factory functions or jest.mock.
+    Check: validation logic, math (stats/combat), and error triggers.
+    Integration Tests (_.test.ts or \*.int-spec.ts):
+    Use Test.createTestingModule to boot the actual module.
+    Database: Use a real PostgreSQL instance (via Docker). Use a global teardown to truncate tables between tests.
+    No Repository Mocking: Let the Service talk to the real Repository and Prisma.
+    Coverage: 100% for Game Rules (Combat, Stats, Inventory).
+    Frontend (React)
+    Component Tests: Use React Testing Library.
+    Test behavior, not implementation (e.g., "click button", not "check state").
+    Hooks: Test React Query hooks using renderHook with a proper QueryClientProvider wrapper.
+    Mocking API: Use MSW (Mock Service Worker) to intercept network requests. Do not manual-mock the generated.ts hooks.
+    Tooling & Commands
+    Framework: vitest (faster for monorepos) or jest.
+    Execution:
+    bash
 
-* Unit (services); Integration (modules); minimal mocking
+# Run all tests via turbo
+
+pnpm test
+
+# Run only backend integration tests
+
+pnpm --filter back test:int
+Use code with caution.
+
+Hard Rules
+❌ No mocking of Prisma Client in integration tests.
+❌ No logic testing in Controllers: Only status codes and response structures.
+✅ Deterministic tests: Seed fixed data before running game-logic tests.
+✅ Clean State: Every test must leave the database/store in its original state.
 
 ---
 
 ## 16) Git
 
-* Conventional commits; small, atomic
+- Conventional commits; small, atomic
 
 ---
 
@@ -264,7 +305,7 @@ pnpm test
 
 ## 18) DoD
 
-* Compiles; types correct; lint passes; architecture respected
+- Compiles; types correct; lint passes; architecture respected
 
 ---
 
@@ -276,12 +317,11 @@ pnpm test
 
 ## 20) Anti-Patterns (HARD STOP)
 
-* Business logic in frontend
-* Shared domain logic
-* Direct DB access outside repositories
-* Hidden side effects; premature abstraction
+- Business logic in frontend
+- Shared domain logic
+- Direct DB access outside repositories
+- Hidden side effects; premature abstraction
 
 ---
 
 **Note**: Design for independent scaling/splitting; avoid tech debt.
-
