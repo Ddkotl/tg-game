@@ -7,9 +7,13 @@
     "dev": "turbo run dev",
     "build": "turbo run build",
     "lint": "turbo run lint",
-    "test": "turbo run test"
+    "test": "turbo run test",
+    "api:generate": "pnpm --filter front api:generate",
+    "api:regen": "pnpm --filter front api:regen",
+    "prepare": "husky install"
   },
   "devDependencies": {
+    "husky": "^8.0.0",
     "turbo": "^2.0.0"
   }
 }
