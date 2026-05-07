@@ -1,5 +1,0 @@
-dist
-node_modules
-src/api/generated.ts
-src/api/model
-src/api/schema.json
