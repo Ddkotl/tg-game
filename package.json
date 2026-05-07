@@ -1,6 +1,11 @@
 {
   "name": "tg-game",
   "version": "1.0.0",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {},
-  "devDependencies": {}
+  "dependencies": {
+    "concurrently": "^9.2.1"
+  }
 }
